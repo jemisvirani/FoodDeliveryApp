@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#808080</color>
+    <color name="green">#00FF0B</color>
+    <color name="buttonColor">#8B0000</color>
+
+    <color name="orange">#FB8500</color>
+    <color name="lightPink">#fff5f6</color>
+    <color name="addButtonRed">#CE1022</color>
+    <color name="greyishBlack">#464959</color>
+    <color name="redish">#e91e63</color>
+    <color name="finalScreenCard">#fdf6ec</color>
+
+    <color name="ViewActivityClickableColor">#FF196A3D</color>
+    <color name="ZomatoGold">#FFBD9148</color>
+    <color name="greendivider">#FF127C45</color>
+    <color name="greenlight">#FFD8F3DF</color>
+    <color name="cream">#FFFFF7E2</color>
+    <color name="percentage">#FFAF9136</color>
+    <color name="offwhitebackground">#FFFFF7E2</color>
+    <color name="light_green_track">#C8E6C9</color>
+    <color name="light_red_track">#FFCDD2</color>
+    
+</resources>
