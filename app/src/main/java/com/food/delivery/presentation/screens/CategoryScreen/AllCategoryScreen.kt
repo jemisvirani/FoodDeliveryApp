@@ -15,32 +15,56 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.food.delivery.presentation.components.ExploreRow
 import com.food.delivery.presentation.components.HomeScreenCards
+import com.food.delivery.presentation.navigation.Routes
 
 @Composable
-fun AllCategoryScreen(navController: NavController){
+fun AllCategoryScreen(navController: NavController) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         ExploreRow()
-        Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
-            horizontalArrangement = Arrangement.Start) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 15.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
             Column() {
-                Text(text = "660 RESTAURANTS DELIVERING TO YOU",
+                Text(
+                    text = "660 RESTAURANTS DELIVERING TO YOU",
                     modifier = Modifier,
                     color = Color.Gray
                 )
-                Text(text = "Featured",
+                Text(
+                    text = "Featured",
                     color = Color.Gray
                 )
             }
         }
 
-        HomeScreenCards(navController = navController)
+        HomeScreenCards(
+            onClick = {
+                                navController.navigate(Routes.ParticularCardScreen("delivery"))
+
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        HomeScreenCards(navController = navController)
+        HomeScreenCards(
+            onClick = {
+                                navController.navigate(Routes.ParticularCardScreen("delivery"))
+
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        HomeScreenCards(navController = navController)
+        HomeScreenCards(
+            onClick = {
+                navController.navigate(Routes.ParticularCardScreen("delivery"))
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        HomeScreenCards(navController = navController)
+        HomeScreenCards(
+            onClick = {
+                                navController.navigate(Routes.ParticularCardScreen("delivery"))
+
+            }
+        )
         Spacer(modifier = Modifier.height(50.dp))
 
     }

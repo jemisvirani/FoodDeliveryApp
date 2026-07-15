@@ -54,6 +54,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.bottombar.AnimatedBottomBar
 import com.food.delivery.R
 import com.food.delivery.presentation.screens.DeliveryScreen
@@ -116,11 +117,23 @@ fun App(
                 it.hasRoute<Routes.DiningScreen>()
     } == true
 
+
+
     val selectedItemIndex = when {
         currentDestination?.hasRoute<Routes.DeliveryScreen>() == true -> 0
         currentDestination?.hasRoute<Routes.QuickScreen>() == true -> 1
         currentDestination?.hasRoute<Routes.DiningScreen>() == true -> 2
-        else -> 0
+
+        currentDestination?.hasRoute<Routes.ParticularCardScreen>() == true -> {
+            when (navBackStackEntry!!.toRoute<Routes.ParticularCardScreen>().source) {
+                "delivery" -> 0
+                "quick" -> 1
+                "dining" -> 2
+                else -> -1
+            }
+        }
+
+        else -> -1
     }
 
 

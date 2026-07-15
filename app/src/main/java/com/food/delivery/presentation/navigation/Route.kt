@@ -24,7 +24,9 @@ sealed class Routes{
     @Serializable
     object ProfileScreen : Routes()
     @Serializable
-    object ParticularCardScreen : Routes()
+    data class ParticularCardScreen(
+        val source: String
+    ) : Routes()
     @Serializable
     object FinalCheckoutScreen : Routes()
     @Serializable

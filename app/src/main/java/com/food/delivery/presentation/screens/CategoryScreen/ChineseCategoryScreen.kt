@@ -41,6 +41,7 @@ import coil.compose.AsyncImage
 import com.food.delivery.R
 import com.food.delivery.presentation.components.FilterRow
 import com.food.delivery.presentation.components.HomeScreenCards
+import com.food.delivery.presentation.navigation.Routes
 
 @Composable
 fun ChineseCategoryScreen(navController: NavController) {
@@ -84,7 +85,7 @@ fun ChineseCategoryCards(navController: NavController) {
             "Get item @₹99 only",
             "La Pino'z Pizza",
             "15 mins",
-                    R.drawable.timer,
+            R.drawable.timer,
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -107,11 +108,23 @@ fun ChineseCategoryCards(navController: NavController) {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        HomeScreenCards(navController = navController)
+        HomeScreenCards(
+            onClick = {
+                navController.navigate(Routes.ParticularCardScreen("delivery"))
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        HomeScreenCards(navController)
+        HomeScreenCards(
+            onClick = {
+                navController.navigate(Routes.ParticularCardScreen("delivery"))
+            }
+        )
         Spacer(modifier = Modifier.height(16.dp))
-        HomeScreenCards(navController)
+        HomeScreenCards(
+            onClick = {
+                navController.navigate(Routes.ParticularCardScreen("delivery"))
+            }
+        )
         Spacer(modifier = Modifier.height(50.dp))
     }
 }
@@ -122,7 +135,7 @@ fun CategoryCard(
     textblackone1: String,
     cardtextname1: String,
     timingtext1: String,
-    timerimage1 : Int,
+    timerimage1: Int,
     foodimagebacground2: Int,
     textblackone2: String,
     cardtextname2: String,
@@ -130,125 +143,152 @@ fun CategoryCard(
     timerimage2: Int
 ) {
 
-    LazyHorizontalGrid(
-        rows = GridCells.Fixed(2),
-        modifier = Modifier.height(650.dp).padding(horizontal = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    Column(
+        modifier = Modifier.fillMaxSize()
     ) {
-        items(20) { index ->
-            Column(modifier = Modifier
-                .padding(horizontal = 4.dp, vertical = 4.dp)
-                .background(Color.White)) {
-                Card(
+        LazyHorizontalGrid(
+            rows = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(650.dp)
+                .padding(horizontal = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(20) { index ->
+                Column(
                     modifier = Modifier
-                        .width(140.dp)
-                        .height(100.dp)
-                        .padding(horizontal = 2.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                        .padding(horizontal = 4.dp, vertical = 4.dp)
+                        .background(Color.White)
                 ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Image(
-                            painter = painterResource(id = foodimagebackground1),
-                            contentDescription = "Burger",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Text(
-                            text = textblackone1,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(bottom = 8.dp)
-                                .background(Color.Black.copy(alpha = 0.80f)),
-                            color = Color.White,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Icon(
-                            painter = painterResource(R.drawable.outline_bookmark_24),
-                            contentDescription = "bookmark",
-                            modifier = Modifier
-                                .size(30.dp)
-                                .align(Alignment.TopEnd)
-                                .padding(8.dp),
-                            tint = Color.White
-                        )
-                    }
-                }
-                Column {
-                    Text(text = cardtextname1,
-                        modifier = Modifier.padding(start = 10.dp),
-                        fontSize = 14.sp,
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold)
-                    Row(modifier = Modifier.padding(start = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        Icon(painter = painterResource(id = timerimage1), contentDescription = "timer",
-                            modifier = Modifier.size(14.dp), tint = colorResource(R.color.green)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = timingtext1,
-                            fontSize = 12.sp,
-                            color = Color.Gray
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.height(14.dp))
-                Card(modifier = Modifier
-                    .width(140.dp)
-                    .height(100.dp)
-                    .padding(horizontal = 2.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        AsyncImage(
-                            model = foodimagebacground2,
-                            contentDescription = "Dining Banner",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        Text(
-                            text = textblackone2,
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(bottom = 8.dp)
-                                .background(Color.Black.copy(alpha = 0.80f)),
-                            color = Color.White,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Icon(painter = painterResource(R.drawable.outline_bookmark_24),
-                            contentDescription = "bookmark",
-                            modifier = Modifier.
-                            size(30.dp).
-                            align(Alignment.TopEnd).
-                            padding(8.dp),
-                            tint = Color.White
-                        )
-                    }
-                }
-                Column {
-                    Text(text = cardtextname2,
-                        modifier = Modifier.padding(start = 10.dp),
-                        fontSize = 14.sp,
-                        color = Color.Black,
-                        fontWeight = FontWeight.SemiBold)
-                    Row(
-                        modifier = Modifier.padding(start = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Card(
+                        modifier = Modifier
+                            .width(140.dp)
+                            .height(100.dp)
+                            .padding(horizontal = 2.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                     ) {
-                        Icon(painter = painterResource(id = timerimage2),contentDescription = "timer",
-                            modifier = Modifier.size(14.dp),
-                            tint = Color.Green)
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(text = timingtext2,
-                            fontSize = 12.sp,
-                            color = Color.Gray)
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Image(
+                                painter = painterResource(id = foodimagebackground1),
+                                contentDescription = "Burger",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                            Text(
+                                text = textblackone1,
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(bottom = 8.dp)
+                                    .background(Color.Black.copy(alpha = 0.80f)),
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Icon(
+                                painter = painterResource(R.drawable.outline_bookmark_24),
+                                contentDescription = "bookmark",
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .align(Alignment.TopEnd)
+                                    .padding(8.dp),
+                                tint = Color.White
+                            )
+                        }
+                    }
+                    Column {
+                        Text(
+                            text = cardtextname1,
+                            modifier = Modifier.padding(start = 10.dp),
+                            fontSize = 14.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Row(
+                            modifier = Modifier.padding(start = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = timerimage1),
+                                contentDescription = "timer",
+                                modifier = Modifier.size(14.dp),
+                                tint = colorResource(R.color.green)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = timingtext1,
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Card(
+                        modifier = Modifier
+                            .width(140.dp)
+                            .height(100.dp)
+                            .padding(horizontal = 2.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            AsyncImage(
+                                model = foodimagebacground2,
+                                contentDescription = "Dining Banner",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                            Text(
+                                text = textblackone2,
+                                modifier = Modifier
+                                    .align(Alignment.BottomStart)
+                                    .padding(bottom = 8.dp)
+                                    .background(Color.Black.copy(alpha = 0.80f)),
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Icon(
+                                painter = painterResource(R.drawable.outline_bookmark_24),
+                                contentDescription = "bookmark",
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .align(Alignment.TopEnd)
+                                    .padding(8.dp),
+                                tint = Color.White
+                            )
+                        }
+                    }
+                    Column {
+                        Text(
+                            text = cardtextname2,
+                            modifier = Modifier.padding(start = 10.dp),
+                            fontSize = 14.sp,
+                            color = Color.Black,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Row(
+                            modifier = Modifier.padding(start = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = timerimage2),
+                                contentDescription = "timer",
+                                modifier = Modifier.size(14.dp),
+                                tint = Color.Green
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = timingtext2,
+                                fontSize = 12.sp,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             }
+
         }
     }
 }

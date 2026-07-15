@@ -49,10 +49,8 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
-fun HomeScreenCards(navController: NavController) {
-    Card(onClick = {
-        navController.navigate(Routes.ParticularCardScreen)
-    },
+fun HomeScreenCards(onClick: () -> Unit,) {
+    Card(onClick = onClick,
      shape = RoundedCornerShape(22.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier.fillMaxWidth().height(312.dp).padding(horizontal = 16.dp)
