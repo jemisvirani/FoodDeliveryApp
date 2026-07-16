@@ -56,15 +56,18 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.bottombar.AnimatedBottomBar
 import com.food.delivery.R
+import com.food.delivery.auth.screens.ChangePasswordScreen
+import com.food.delivery.auth.screens.ForgotPasswordScreen
+import com.food.delivery.auth.screens.LoginScreen
+import com.food.delivery.auth.screens.SignUpScreen
 import com.food.delivery.presentation.screens.DeliveryScreen
 import com.food.delivery.presentation.screens.DiningScreen
 import com.food.delivery.presentation.screens.FinalCheckOutScreen
-import com.food.delivery.presentation.screens.LoginScreen
 import com.food.delivery.presentation.screens.ParticularCardScreen
 import com.food.delivery.presentation.screens.ProfileScreen
 import com.food.delivery.presentation.screens.QuickScreen
 import com.food.delivery.presentation.screens.SearchBarScreen
-import com.food.delivery.presentation.screens.SignUpOldScreen
+import okhttp3.Route
 
 data class BottomNavItem(
     val title: String,
@@ -75,7 +78,7 @@ data class BottomNavItem(
 @Composable
 fun App(
     isVisible: Boolean,
-    listState : LazyListState,
+    listState: LazyListState,
 
     ) {
     val navController = rememberNavController()
@@ -117,7 +120,6 @@ fun App(
     } == true
 
 
-
     val selectedItemIndex = when {
         currentDestination?.hasRoute<Routes.DeliveryScreen>() == true -> 0
         currentDestination?.hasRoute<Routes.QuickScreen>() == true -> 1
@@ -137,7 +139,7 @@ fun App(
 
 
     val BottomNavItems = listOf(
-        BottomNavItem(      
+        BottomNavItem(
             title = "Delivery",
             icon = painterResource(R.drawable.delivery_cart)
         ),
@@ -268,28 +270,55 @@ fun App(
                     }
                 }
             }
-}
-    ){ innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding))  {
-            NavHost(navController = navController, startDestination = startScreen){
-                navigation<SubNavigation.LoginSignUpScreen>(startDestination = Routes.LoginScreen){
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)) {
+            NavHost(navController = navController, startDestination = startScreen) {
+                navigation<SubNavigation.LoginSignUpScreen>(startDestination = Routes.LoginScreen) {
                     composable<Routes.LoginScreen> {
-                        LoginScreen(navController = navController)
+                        LoginScreen(onSignUpClick = {
+                            navController.navigate(Routes.SignUpScreen)
+                        }, onForgotPasswordClick = {
+                            navController.navigate(Routes.ForgetPasswordScreen)
+                        })
                     }
                     composable<Routes.SignUpScreen> {
-                        SignUpOldScreen(navController = navController)
+                        SignUpScreen(
+                            onBackClick = {
+                                navController.popBackStack()
+                            },
+                            onLoginClick = {
+                                navController.navigate(Routes.LoginScreen)
+                            }
+                        )
+                    }
+                    composable<Routes.ForgetPasswordScreen> {
+                        ForgotPasswordScreen(onSuccess = {
+                            navController.navigate(Routes.ChangePasswordScreen)
+                        }, onBackClick = {
+                            navController.navigate(Routes.LoginScreen)
+                        })
+                    }
+                    composable<Routes.ChangePasswordScreen> {
+                        ChangePasswordScreen(onBackClick = {
+                            navController.navigate(Routes.ForgetPasswordScreen)
+                        }, onPasswordChanged = {
+                            navController.navigate(Routes.LoginScreen)
+                        })
                     }
                 }
 
-                navigation<SubNavigation.MainHomeScreen>(startDestination = Routes.DeliveryScreen){
+                navigation<SubNavigation.MainHomeScreen>(startDestination = Routes.DeliveryScreen) {
                     composable<Routes.DeliveryScreen> {
-                        DeliveryScreen(navController,listState)
+                        DeliveryScreen(navController, listState)
                     }
                     composable<Routes.QuickScreen> {
-                        QuickScreen(navController,listState)
+                        QuickScreen(navController, listState)
                     }
                     composable<Routes.DiningScreen> {
-                        DiningScreen(navController,listState)
+                        DiningScreen(navController, listState)
                     }
                     composable<Routes.ProfileScreen> {
                         ProfileScreen(navController)
