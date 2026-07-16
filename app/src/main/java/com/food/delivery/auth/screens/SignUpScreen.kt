@@ -19,6 +19,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,8 +34,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,235 +75,254 @@ fun SignUpScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val snackBarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(state.snackBar) {
+        state.snackBar?.let { message ->
+            snackBarHostState.showSnackbar(message)
+            viewModel.clearSnackbar()
+        }
+    }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(280.dp)
-                .background(HeaderColor)
-        ) {
-
-            Spacer(modifier = Modifier.height(45.dp))
-
-            Box(
-                modifier = Modifier
-                    .padding(start = 20.dp)
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(Color.White),
-                contentAlignment = Alignment.Center
-            ) {
-                IconButton(
-                    onClick = onBackClick,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null,
-                        tint = Color.Black
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Text(
-                text = "Sign Up",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 34.sp
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Please sign up to get started",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = Color.LightGray,
-                fontSize = 16.sp
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState
             )
         }
-
-        Card(
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 220.dp),
-            shape = RoundedCornerShape(
-                topStart = 35.dp,
-                topEnd = 35.dp
-            ),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
+                .padding(innerPadding)
         ) {
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 28.dp)
+                    .fillMaxWidth()
+                    .height(280.dp)
+                    .background(HeaderColor)
             ) {
 
-                Text(
-                    text = "FULL NAME",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    color = Color.Black
-                )
+                Spacer(modifier = Modifier.height(45.dp))
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                AppTextField(
-                    value = state.fullName,
-                    onValueChange = viewModel::onNameChange,
-                    placeholder = "Enter your full name",
-                    isError = state.fullNameError != null,
-                    errorMessage = state.fullNameError
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Text(
-                    text = "EMAIL",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                AppTextField(
-                    value = state.email,
-                    onValueChange = viewModel::onEmailChange,
-                    placeholder = "example@gmail.com",
-                    keyboardType = KeyboardType.Email,
-                    isError = state.emailError != null,
-                    errorMessage = state.emailError
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Text(
-                    text = "ADDRESS",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp,
-                    color = Color.Black
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                AppTextField(
-                    value = state.address,
-                    onValueChange = viewModel::onAddressChange,
-                    placeholder = "Enter your address",
-                    isError = state.addressError != null,
-                    errorMessage = state.addressError
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Text(
-                    text = "PASSWORD",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                PasswordField(
-                    value = state.password,
-                    onValueChange = viewModel::onPasswordChange,
-                    placeholder = "Enter your password",
-                    visible = passwordVisible,
-                    onVisibleChange = {
-                        passwordVisible = !passwordVisible
-                    },
-                    isError = state.passwordError != null,
-                    errorMessage = state.passwordError
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Text(
-                    text = "CONFIRM PASSWORD",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 12.sp
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                PasswordField(
-                    value = state.confirmPassword,
-                    onValueChange = viewModel::onConfirmPasswordChange,
-                    placeholder = "Confirm your password",
-                    visible = confirmPasswordVisible,
-                    onVisibleChange = {
-                        confirmPasswordVisible = !confirmPasswordVisible
-                    },
-                    isError = state.confirmPasswordError != null,
-                    errorMessage = state.confirmPasswordError
-                )
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Button(
-                    onClick = {
-                        viewModel.signUp {
-
-
-                        }
-                    },
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(58.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFFF7622)
-                    )
+                        .padding(start = 20.dp)
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = "SIGN UP",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-
-                    Text(
-                        text = "Already have an account? ",
-                        color = Color.Gray
-                    )
-
-                    Text(
-                        text = "Login",
-                        color = Color(0xFFFF7622),
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable {
-                            onLoginClick()
-                        }
-                    )
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                            tint = Color.Black
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(30.dp))
+
+                Text(
+                    text = "Sign Up",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 34.sp
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Please sign up to get started",
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = Color.LightGray,
+                    fontSize = 16.sp
+                )
             }
 
+            Card(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 220.dp),
+                shape = RoundedCornerShape(
+                    topStart = 35.dp,
+                    topEnd = 35.dp
+                ),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                )
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp, vertical = 28.dp)
+                ) {
+
+                    Text(
+                        text = "FULL NAME",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AppTextField(
+                        value = state.fullName,
+                        onValueChange = viewModel::onNameChange,
+                        placeholder = "Enter your full name",
+                        isError = state.fullNameError != null,
+                        errorMessage = state.fullNameError
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        text = "EMAIL",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AppTextField(
+                        value = state.email,
+                        onValueChange = viewModel::onEmailChange,
+                        placeholder = "example@gmail.com",
+                        keyboardType = KeyboardType.Email,
+                        isError = state.emailError != null,
+                        errorMessage = state.emailError
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        text = "ADDRESS",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    AppTextField(
+                        value = state.address,
+                        onValueChange = viewModel::onAddressChange,
+                        placeholder = "Enter your address",
+                        isError = state.addressError != null,
+                        errorMessage = state.addressError
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        text = "PASSWORD",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    PasswordField(
+                        value = state.password,
+                        onValueChange = viewModel::onPasswordChange,
+                        placeholder = "Enter your password",
+                        visible = passwordVisible,
+                        onVisibleChange = {
+                            passwordVisible = !passwordVisible
+                        },
+                        isError = state.passwordError != null,
+                        errorMessage = state.passwordError
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Text(
+                        text = "CONFIRM PASSWORD",
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 12.sp
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    PasswordField(
+                        value = state.confirmPassword,
+                        onValueChange = viewModel::onConfirmPasswordChange,
+                        placeholder = "Confirm your password",
+                        visible = confirmPasswordVisible,
+                        onVisibleChange = {
+                            confirmPasswordVisible = !confirmPasswordVisible
+                        },
+                        isError = state.confirmPasswordError != null,
+                        errorMessage = state.confirmPasswordError
+                    )
+
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    Button(
+                        onClick = {
+                            viewModel.signUp {
+
+
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(58.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFFFF7622)
+                        )
+                    ) {
+                        Text(
+                            text = "SIGN UP",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+
+                        Text(
+                            text = "Already have an account? ",
+                            color = Color.Gray
+                        )
+
+                        Text(
+                            text = "Login",
+                            color = Color(0xFFFF7622),
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.clickable {
+                                onLoginClick()
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
+
+            }
         }
     }
+
+
 
 }
 

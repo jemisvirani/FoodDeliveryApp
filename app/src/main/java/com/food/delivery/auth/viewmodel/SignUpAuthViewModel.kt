@@ -1,6 +1,8 @@
 package com.food.delivery.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.food.delivery.auth.domain.repository.AuthRepository
 import com.food.delivery.auth.ui.state.SignUpUiState
 import com.food.delivery.auth.validation.AuthValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,9 +10,11 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor() : ViewModel() {
+class SignUpViewModel @Inject constructor(private val repository: AuthRepository
+) : ViewModel() {
 
     private val _state =
         MutableStateFlow(SignUpUiState())
@@ -72,17 +76,25 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
 
     }
 
+    fun clearSnackbar() {
+        _state.update {
+            it.copy(
+                snackBar = null
+            )
+        }
+    }
+
     fun signUp(
         onSuccess: () -> Unit
     ) {
 
         val ui = state.value
 
-        val nameError = AuthValidation.name(ui.fullName)
+        val fullNameError = AuthValidation.name(ui.fullName)
         val emailError = AuthValidation.email(ui.email)
         val addressError = AuthValidation.address(ui.address)
         val passwordError = AuthValidation.password(ui.password)
-        val confirmError =
+        val confirmPasswordError =
             AuthValidation.confirmPassword(
                 ui.password,
                 ui.confirmPassword
@@ -91,30 +103,43 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         _state.update {
 
             it.copy(
-
-                fullNameError = nameError,
-
+                fullNameError = fullNameError,
                 emailError = emailError,
-
                 addressError = addressError,
-
                 passwordError = passwordError,
-
-                confirmPasswordError = confirmError
-
+                confirmPasswordError = confirmPasswordError
             )
 
         }
 
         if (
-            nameError == null &&
-            emailError == null &&
-            addressError == null &&
-            passwordError == null &&
-            confirmError == null
+            fullNameError != null ||
+            emailError != null ||
+            addressError != null ||
+            passwordError != null ||
+            confirmPasswordError != null
         ) {
+            return
+        }
 
-            onSuccess()
+        viewModelScope.launch {
+
+            repository.signUp(
+                ui.email,
+                ui.password
+            ).onSuccess {
+
+                onSuccess()
+
+            }.onFailure { exception ->
+
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        snackBar = exception.message ?: "Something went wrong"
+                    )
+                }
+            }
 
         }
 
