@@ -41,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -67,7 +66,7 @@ import com.food.delivery.presentation.viewModel.SignUpScreenState
 
 
 @Composable
-fun SignUpScreen(
+fun SignUpOldScreen(
     viewModel: FoodDeliverViewModel = hiltViewModel(),
     navController: NavController
 ) {

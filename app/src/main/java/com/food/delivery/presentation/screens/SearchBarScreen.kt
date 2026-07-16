@@ -109,7 +109,7 @@ fun SearchBarScreen(modifier: Modifier, navController: NavController) {
                             Box {
                                 if (searchQuery.isEmpty()) {
                                     Text(
-                                        text = "Search \"Restaurant\"",
+                                        text = "Search Restaurant",
                                         color = Color.Gray,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 15.sp
@@ -152,35 +152,51 @@ fun TabItem() {
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        TabRow(
-            selectedTabIndex = selectedIndex,
-            indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedIndex]),
-                    color = colorResource(R.color.buttonColor)
-                )
-            }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 12.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .background(Color(0xFFF4F4F4))
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
+
             tabItem.forEachIndexed { index, item ->
-                Tab(
-                    selected = index == selectedIndex,
-                    selectedContentColor = colorResource(R.color.buttonColor),
-                    unselectedContentColor = Color.Gray,
-                    onClick = {
-                        selectedIndex = index
-                    },
-                    text = {
-                        Text(
-                            text = item.title,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 18.sp
+
+                val selected = selectedIndex == index
+
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clip(RoundedCornerShape(50.dp))
+                        .background(
+                            if (selected)
+                                colorResource(R.color.buttonColor)
+                            else
+                                Color.Transparent
                         )
-                    }
-                )
+                        .clickable {
+                            selectedIndex = index
+                        }
+                        .padding(vertical = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+
+                    Text(
+                        text = item.title,
+                        color = if (selected)
+                            Color.White
+                        else
+                            Color.Gray,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                }
             }
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         when (selectedIndex) {
             0 -> FoodCategoryList()
@@ -213,13 +229,12 @@ fun FoodCategoryList(modifier: Modifier = Modifier) {
         FoodCategory("Sweets", R.drawable.sweets),
         FoodCategory("Biryani", R.drawable.vegbiryani),
         FoodCategory("Deserts", R.drawable.ice_cream),
-        FoodCategory("Rolls", R.drawable.chinese),
+        FoodCategory("Rolls", R.drawable.rolls),
         FoodCategory("Pasta", R.drawable.pasta),
         FoodCategory("Chinese ", R.drawable.chinese),
         FoodCategory("Burger", R.drawable.burger),
         FoodCategory("Sweets", R.drawable.foodbag),
         FoodCategory("Biryani", R.drawable.vegbiryani),
-        FoodCategory("Rolls", R.drawable.rolls),
         FoodCategory("Pasta", R.drawable.pasta),
     )
 

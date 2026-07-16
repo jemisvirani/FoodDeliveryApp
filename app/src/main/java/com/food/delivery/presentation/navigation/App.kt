@@ -38,7 +38,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -65,7 +64,7 @@ import com.food.delivery.presentation.screens.ParticularCardScreen
 import com.food.delivery.presentation.screens.ProfileScreen
 import com.food.delivery.presentation.screens.QuickScreen
 import com.food.delivery.presentation.screens.SearchBarScreen
-import com.food.delivery.presentation.screens.SignUpScreen
+import com.food.delivery.presentation.screens.SignUpOldScreen
 
 data class BottomNavItem(
     val title: String,
@@ -278,7 +277,7 @@ fun App(
                         LoginScreen(navController = navController)
                     }
                     composable<Routes.SignUpScreen> {
-                        SignUpScreen(navController = navController)
+                        SignUpOldScreen(navController = navController)
                     }
                 }
 

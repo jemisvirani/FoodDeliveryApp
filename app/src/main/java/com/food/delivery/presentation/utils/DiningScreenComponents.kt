@@ -56,7 +56,7 @@ fun SearchBarDiningTabScreen() {
 @Composable
 fun TrendingSpotsLazyRow() {
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 8.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(5) { index ->
@@ -159,7 +159,7 @@ fun EditorChoiceText() {
 @Composable
 fun RestaurantLazyRow() {
     LazyRow(
-        contentPadding = PaddingValues(horizontal = 8.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(5) { index ->
@@ -249,7 +249,7 @@ fun RestaurantNearMeCard() {
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
-            .padding(8.dp),
+            .padding(vertical = 8.dp, horizontal = 12.dp),
         shape = RoundedCornerShape(15.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
