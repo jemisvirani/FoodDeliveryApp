@@ -1,12 +1,12 @@
 package com.food.delivery.presentation.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -53,9 +52,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.food.delivery.R;
+import com.food.delivery.presentation.navigation.SubNavigation
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -155,7 +157,7 @@ fun ProfileScreen(navController: NavHostController) {
 
             ZomatoGold()
 
-            LazyColumns()
+            LazyColumns(navController)
         }
 
     }
@@ -206,7 +208,7 @@ fun ZomatoGold() {
 }
 
 @Composable
-fun LazyColumns() {
+fun LazyColumns(navController: NavController) {
     val cardList = listOf(
         CardItem.ColumnGrid(name = "Ayush"),
         CardItem.FirstCard(profileName = "Your Profile", percentageText = "48%Completed"),
@@ -236,7 +238,7 @@ fun LazyColumns() {
                 is CardItem.EighthCard -> EighthCard(item)
                 is CardItem.NinthCard -> NinthCard(item)
                 is CardItem.TenthCard -> TenthCard(item)
-                is CardItem.EleventhsCard -> EleventhCard(item)
+                is CardItem.EleventhsCard -> EleventhCard(item,navController)
             }
         }
     }
@@ -915,7 +917,7 @@ fun TenthCard(card: CardItem.TenthCard) {
 }
 
 @Composable
-fun EleventhCard(card: CardItem.EleventhsCard) {
+fun EleventhCard(card: CardItem.EleventhsCard, navController: NavController) {
     Card(modifier = Modifier.padding(start = 10.dp, top = 13.dp, end = 10.dp, bottom = 13.dp).fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White)) {
 
@@ -1014,7 +1016,18 @@ fun EleventhCard(card: CardItem.EleventhsCard) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 4.dp),
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 4.dp).clickable{
+            FirebaseAuth.getInstance().signOut()
+
+            navController.navigate(SubNavigation.LoginSignUpScreen) {
+
+                popUpTo(SubNavigation.MainHomeScreen) {
+                    inclusive = true
+                }
+
+                launchSingleTop = true
+            }
+        },
             verticalAlignment = Alignment.CenterVertically) {
             Icon(painter = painterResource(R.drawable.logout),
                 contentDescription = "Your Profile",

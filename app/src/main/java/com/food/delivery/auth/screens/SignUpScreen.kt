@@ -1,5 +1,6 @@
 package com.food.delivery.auth.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -53,10 +55,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.food.delivery.auth.viewmodel.SignUpViewModel
+import com.food.delivery.presentation.navigation.Routes
+import com.food.delivery.presentation.navigation.SubNavigation
 
 @Composable
 fun SignUpScreen(
+    navController: NavController,
     viewModel: SignUpViewModel = hiltViewModel(),
     onLoginClick: () -> Unit,
     onBackClick: () -> Unit
@@ -80,7 +86,7 @@ fun SignUpScreen(
     LaunchedEffect(state.snackBar) {
         state.snackBar?.let { message ->
             snackBarHostState.showSnackbar(message)
-            viewModel.clearSnackbar()
+            viewModel.clearSnackBar()
         }
     }
 
@@ -271,10 +277,17 @@ fun SignUpScreen(
                     Spacer(modifier = Modifier.height(30.dp))
 
                     Button(
+                        enabled = !state.isLoading,
                         onClick = {
                             viewModel.signUp {
+                                Log.d("Signup", "Navigate Home")
 
-
+                                navController.navigate(Routes.DeliveryScreen) {
+                                    popUpTo(navController.graph.id) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
                             }
                         },
                         modifier = Modifier
@@ -285,12 +298,21 @@ fun SignUpScreen(
                             containerColor = Color(0xFFFF7622)
                         )
                     ) {
-                        Text(
-                            text = "SIGN UP",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        if (state.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(22.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+
+                            Text(
+                                text = "SIGN UP",
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))

@@ -1,6 +1,8 @@
 package com.food.delivery.auth.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.food.delivery.auth.domain.repository.AuthRepository
 import com.food.delivery.auth.ui.state.LoginUiState
 import com.food.delivery.auth.validation.AuthValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,10 +10,13 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val repository: AuthRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
@@ -58,8 +63,36 @@ class LoginViewModel @Inject constructor() : ViewModel() {
             )
         }
 
-        if (emailError == null && passwordError == null) {
-            onSuccess()
+        if (emailError != null || passwordError != null) {
+            return
+        }
+
+        viewModelScope.launch {
+
+            _state.update {
+                it.copy(isLoading = true)
+            }
+
+            repository.login(
+                email = ui.email,
+                password = ui.password
+            ).onSuccess {
+
+                _state.update {
+                    it.copy(isLoading = false)
+                }
+
+                onSuccess()
+
+            }.onFailure { exception ->
+
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        snackBar = exception.message ?: "Login failed"
+                    )
+                }
+            }
         }
     }
 }

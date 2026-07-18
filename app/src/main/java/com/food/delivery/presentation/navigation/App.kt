@@ -67,6 +67,7 @@ import com.food.delivery.presentation.screens.ParticularCardScreen
 import com.food.delivery.presentation.screens.ProfileScreen
 import com.food.delivery.presentation.screens.QuickScreen
 import com.food.delivery.presentation.screens.SearchBarScreen
+import com.google.firebase.auth.FirebaseAuth
 import okhttp3.Route
 
 data class BottomNavItem(
@@ -157,11 +158,13 @@ fun App(
         targetValue = if (isVisible) 64.dp else 0.dp
     )
 
-    var startScreen = if (true) {
-        SubNavigation.LoginSignUpScreen
-    } else {
-        SubNavigation.MainHomeScreen
-    }
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    val startGraph =
+        if (currentUser != null) {
+            SubNavigation.MainHomeScreen
+        } else {
+            SubNavigation.LoginSignUpScreen
+        }
 
     Scaffold(
         bottomBar = {
@@ -275,17 +278,18 @@ fun App(
         Box(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {
-            NavHost(navController = navController, startDestination = startScreen) {
+            NavHost(navController = navController, startDestination = startGraph) {
                 navigation<SubNavigation.LoginSignUpScreen>(startDestination = Routes.LoginScreen) {
                     composable<Routes.LoginScreen> {
-                        LoginScreen(onSignUpClick = {
+                        LoginScreen(navController =navController,
+                            onSignUpClick = {
                             navController.navigate(Routes.SignUpScreen)
                         }, onForgotPasswordClick = {
                             navController.navigate(Routes.ForgetPasswordScreen)
                         })
                     }
                     composable<Routes.SignUpScreen> {
-                        SignUpScreen(
+                        SignUpScreen(navController = navController,
                             onBackClick = {
                                 navController.popBackStack()
                             },

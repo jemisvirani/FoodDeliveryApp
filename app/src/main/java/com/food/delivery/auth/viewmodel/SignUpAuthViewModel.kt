@@ -1,5 +1,6 @@
 package com.food.delivery.auth.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.delivery.auth.domain.repository.AuthRepository
@@ -76,7 +77,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
 
     }
 
-    fun clearSnackbar() {
+    fun clearSnackBar() {
         _state.update {
             it.copy(
                 snackBar = null
@@ -124,25 +125,35 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
 
         viewModelScope.launch {
 
-            repository.signUp(
-                ui.email,
-                ui.password
-            ).onSuccess {
+            Log.d("DEBUG", "1. Launch started")
 
-                onSuccess()
+            _state.update { it.copy(isLoading = true) }
 
-            }.onFailure { exception ->
+            try {
+                Log.d("DEBUG", "2. Before repository.signUp")
 
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        snackBar = exception.message ?: "Something went wrong"
-                    )
+                val result = repository.signUp(
+                    fullName = ui.fullName,
+                    email = ui.email,
+                    address = ui.address,
+                    password = ui.password
+                )
+
+                Log.d("DEBUG", "3. After repository.signUp")
+
+                result.onSuccess {
+                    Log.d("DEBUG", "4. onSuccess")
+                    onSuccess()
+                }.onFailure {
+                    Log.d("DEBUG", "5. onFailure")
                 }
+
+            } catch (e: Exception) {
+                Log.e("DEBUG", "Exception", e)
+            } finally {
+                Log.d("DEBUG", "6. finally")
+                _state.update { it.copy(isLoading = false) }
             }
-
         }
-
     }
-
 }
