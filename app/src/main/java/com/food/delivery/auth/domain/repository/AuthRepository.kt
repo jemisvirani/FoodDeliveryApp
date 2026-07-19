@@ -13,4 +13,13 @@ interface AuthRepository {
         password: String
     ): Result<Unit>
 
+    suspend fun forgotPassword(email: String): Result<Unit>
+
+    suspend fun isUserRegistered(email: String): Boolean
+
+     suspend fun changePassword(
+        newPassword: String
+    ): Result<Unit>
+
+
 }

@@ -17,14 +17,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -41,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,12 +60,15 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.food.delivery.R;
+import com.food.delivery.presentation.navigation.Routes
 import com.food.delivery.presentation.navigation.SubNavigation
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavHostController) {
+
+
 
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
@@ -209,9 +216,37 @@ fun ZomatoGold() {
 
 @Composable
 fun LazyColumns(navController: NavController) {
+
+    var showLogoutDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onDismiss = {
+                showLogoutDialog = false
+            },
+            onLogout = {
+
+                showLogoutDialog = false
+
+                FirebaseAuth.getInstance().signOut()
+
+                navController.navigate(SubNavigation.LoginSignUpScreen) {
+                    popUpTo(SubNavigation.MainHomeScreen) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            }
+        )
+    }
+
+
     val cardList = listOf(
         CardItem.ColumnGrid(name = "Ayush"),
         CardItem.FirstCard(profileName = "Your Profile", percentageText = "48%Completed"),
+        CardItem.TwelfthCard(title = "Change Password"),
         CardItem.SecondCard(vegText = "Veg Mode"),
         CardItem.ThirdCard(appearance = "Appearance"),
         CardItem.FourthCard(rating = "Your rating"),
@@ -229,6 +264,7 @@ fun LazyColumns(navController: NavController) {
             when(item){
                 is CardItem.ColumnGrid -> ColumGrid(item)
                 is CardItem.FirstCard -> ProfileCard(item)
+                is CardItem.TwelfthCard -> TwelfthCard(item,navController)
                 is CardItem.SecondCard -> VegModeCard(item)
                 is CardItem.ThirdCard -> AppearanceCard(item)
                 is CardItem.FourthCard -> RatingCard(item)
@@ -238,8 +274,35 @@ fun LazyColumns(navController: NavController) {
                 is CardItem.EighthCard -> EighthCard(item)
                 is CardItem.NinthCard -> NinthCard(item)
                 is CardItem.TenthCard -> TenthCard(item)
-                is CardItem.EleventhsCard -> EleventhCard(item,navController)
+                is CardItem.EleventhsCard -> EleventhCard(item,navController, onShowLogoutDialog = {
+                    showLogoutDialog = it
+                })
             }
+        }
+    }
+
+
+}
+
+@Composable
+fun TwelfthCard(x0: CardItem.TwelfthCard, navController: NavController) {
+    Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp).clickable{
+        navController.navigate(Routes.ChangePasswordScreen)
+    },
+        colors = CardDefaults.cardColors(containerColor = Color.White)) {
+
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            Icon(imageVector = Icons.Default.Password,
+                contentDescription = "Your Profile Icon",
+                modifier = Modifier.size(25.dp),
+                tint = Color.LightGray)
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "Change Password", color = Color.Black)
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "forward arrow",
+                modifier = Modifier.padding(start = 5.dp),
+                tint = Color.DarkGray)
         }
     }
 }
@@ -917,7 +980,13 @@ fun TenthCard(card: CardItem.TenthCard) {
 }
 
 @Composable
-fun EleventhCard(card: CardItem.EleventhsCard, navController: NavController) {
+fun EleventhCard(
+    card: CardItem.EleventhsCard,
+    navController: NavController,
+    onShowLogoutDialog: (Boolean) -> Unit
+) {
+
+
     Card(modifier = Modifier.padding(start = 10.dp, top = 13.dp, end = 10.dp, bottom = 13.dp).fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = Color.White)) {
 
@@ -1017,16 +1086,7 @@ fun EleventhCard(card: CardItem.EleventhsCard, navController: NavController) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 4.dp).clickable{
-            FirebaseAuth.getInstance().signOut()
-
-            navController.navigate(SubNavigation.LoginSignUpScreen) {
-
-                popUpTo(SubNavigation.MainHomeScreen) {
-                    inclusive = true
-                }
-
-                launchSingleTop = true
-            }
+            onShowLogoutDialog(true)
         },
             verticalAlignment = Alignment.CenterVertically) {
             Icon(painter = painterResource(R.drawable.logout),
@@ -1043,6 +1103,7 @@ fun EleventhCard(card: CardItem.EleventhsCard, navController: NavController) {
 
         Spacer(modifier = Modifier.height(6.dp))
     }
+
 }
 
 @Composable
@@ -1152,7 +1213,35 @@ sealed class CardItem {
     data class NinthCard(val title: String)
     data class TenthCard(val title: String)
     data class EleventhsCard(val title: String)
+    data class TwelfthCard(val title: String)
 }
+
+@Composable
+fun LogoutDialog(
+    onDismiss: () -> Unit,
+    onLogout: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text("Logout")
+        },
+        text = {
+            Text("Are you sure you want to logout?")
+        },
+        confirmButton = {
+            TextButton(onClick = onLogout) {
+                Text("Logout")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
+}
+
 
 @Preview(showBackground = true)
 @Composable

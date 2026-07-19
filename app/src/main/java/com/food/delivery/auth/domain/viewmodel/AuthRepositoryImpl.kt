@@ -21,14 +21,9 @@ class AuthRepositoryImpl @Inject constructor(
     ): Result<Unit> {
 
         return try {
-
-            Log.d("AuthRepositoryImpl", "Before Auth")
-
             val authResult = auth
                 .createUserWithEmailAndPassword(email, password)
                 .await()
-
-            Log.d("AuthRepositoryImpl", "After Auth")
 
             val uid = authResult.user!!.uid
 
@@ -39,19 +34,15 @@ class AuthRepositoryImpl @Inject constructor(
                 address = address
             )
 
-            Log.d("AuthRepositoryImpl", "Before Firestore")
-
             firestore.collection("users")
                 .document(uid)
                 .set(user)
                 .await()
 
-            Log.d("AuthRepositoryImpl", "After Firestore")
 
             Result.success(Unit)
 
         } catch (e: Exception) {
-            Log.e("AuthRepositoryImpl", "Exception", e)
             Result.failure(e)
         }
     }
@@ -69,6 +60,44 @@ class AuthRepositoryImpl @Inject constructor(
 
         } catch (e: Exception) {
 
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun forgotPassword(
+        email: String
+    ): Result<Unit> {
+        return try {
+            Log.d("ForgetPasswordDeliveryApp", email)
+            auth.sendPasswordResetEmail(email).await()
+            Log.d("ForgetPasswordDeliveryApp", email)
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun isUserRegistered(email: String): Boolean {
+        val snapshot = firestore.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+
+        return !snapshot.isEmpty
+    }
+
+    override suspend fun changePassword(
+        newPassword: String
+    ): Result<Unit> {
+        return try {
+            val user = FirebaseAuth.getInstance().currentUser
+                ?: return Result.failure(Exception("User not logged in"))
+
+            user.updatePassword(newPassword).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
             Result.failure(e)
         }
     }

@@ -275,21 +275,25 @@ fun App(
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             NavHost(navController = navController, startDestination = startGraph) {
                 navigation<SubNavigation.LoginSignUpScreen>(startDestination = Routes.LoginScreen) {
                     composable<Routes.LoginScreen> {
-                        LoginScreen(navController =navController,
+                        LoginScreen(
+                            navController = navController,
                             onSignUpClick = {
-                            navController.navigate(Routes.SignUpScreen)
-                        }, onForgotPasswordClick = {
-                            navController.navigate(Routes.ForgetPasswordScreen)
-                        })
+                                navController.navigate(Routes.SignUpScreen)
+                            }, onForgotPasswordClick = {
+                                navController.navigate(Routes.ForgetPasswordScreen)
+                            })
                     }
                     composable<Routes.SignUpScreen> {
-                        SignUpScreen(navController = navController,
+                        SignUpScreen(
+                            navController = navController,
                             onBackClick = {
                                 navController.popBackStack()
                             },
@@ -299,17 +303,13 @@ fun App(
                         )
                     }
                     composable<Routes.ForgetPasswordScreen> {
-                        ForgotPasswordScreen(onSuccess = {
-                            navController.navigate(Routes.ChangePasswordScreen)
-                        }, onBackClick = {
+                        ForgotPasswordScreen(navController = navController, onBackClick = {
                             navController.navigate(Routes.LoginScreen)
                         })
                     }
                     composable<Routes.ChangePasswordScreen> {
-                        ChangePasswordScreen(onBackClick = {
-                            navController.navigate(Routes.ForgetPasswordScreen)
-                        }, onPasswordChanged = {
-                            navController.navigate(Routes.LoginScreen)
+                        ChangePasswordScreen(navController = navController, onBackClick = {
+                            navController.navigate(Routes.ProfileScreen)
                         })
                     }
                 }

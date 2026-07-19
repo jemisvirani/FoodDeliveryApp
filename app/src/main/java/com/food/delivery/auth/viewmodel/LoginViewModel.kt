@@ -47,6 +47,15 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun clearSnackBar() {
+        _state.update {
+            it.copy(
+                snackBar = null
+            )
+        }
+    }
+
+
     fun login(
         onSuccess: () -> Unit
     ) {
@@ -93,6 +102,8 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
+
+
         }
     }
 }

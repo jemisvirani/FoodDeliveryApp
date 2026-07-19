@@ -124,36 +124,29 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
         }
 
         viewModelScope.launch {
-
-            Log.d("DEBUG", "1. Launch started")
-
             _state.update { it.copy(isLoading = true) }
 
-            try {
-                Log.d("DEBUG", "2. Before repository.signUp")
-
-                val result = repository.signUp(
-                    fullName = ui.fullName,
-                    email = ui.email,
-                    address = ui.address,
-                    password = ui.password
-                )
-
-                Log.d("DEBUG", "3. After repository.signUp")
-
-                result.onSuccess {
-                    Log.d("DEBUG", "4. onSuccess")
-                    onSuccess()
-                }.onFailure {
-                    Log.d("DEBUG", "5. onFailure")
+            repository.signUp(
+                fullName = ui.fullName,
+                email = ui.email,
+                address = ui.address,
+                password = ui.password
+            ).onSuccess {
+                _state.update {
+                    it.copy(isLoading = false)
                 }
 
-            } catch (e: Exception) {
-                Log.e("DEBUG", "Exception", e)
-            } finally {
-                Log.d("DEBUG", "6. finally")
-                _state.update { it.copy(isLoading = false) }
+                onSuccess()
+
+            }.onFailure { exception ->
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        snackBar = exception.message ?: "Login failed"
+                    )
+                }
             }
+
         }
     }
 }

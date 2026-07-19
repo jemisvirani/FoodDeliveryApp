@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +23,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldDefaults
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
@@ -46,6 +48,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -83,6 +87,14 @@ fun SignUpScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
 
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusManager.clearFocus(force = true)
+        keyboardController?.hide()
+    }
+
     LaunchedEffect(state.snackBar) {
         state.snackBar?.let { message ->
             snackBarHostState.showSnackbar(message)
@@ -91,9 +103,11 @@ fun SignUpScreen(
     }
 
     Scaffold(
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
         snackbarHost = {
             SnackbarHost(
-                hostState = snackBarHostState
+                hostState = snackBarHostState,
+                modifier = Modifier.navigationBarsPadding()
             )
         }
     ) { innerPadding ->
@@ -171,7 +185,7 @@ fun SignUpScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp, vertical = 28.dp)
+                        .padding(24.dp)
                 ) {
 
                     Text(
@@ -276,12 +290,9 @@ fun SignUpScreen(
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    Button(
-                        enabled = !state.isLoading,
-                        onClick = {
+                    Button(onClick = {
+                        if (!state.isLoading) {
                             viewModel.signUp {
-                                Log.d("Signup", "Navigate Home")
-
                                 navController.navigate(Routes.DeliveryScreen) {
                                     popUpTo(navController.graph.id) {
                                         inclusive = false
@@ -289,13 +300,15 @@ fun SignUpScreen(
                                     launchSingleTop = true
                                 }
                             }
-                        },
+                        }
+                    },enabled = !state.isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(58.dp),
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFFF7622)
+                            containerColor = Color(0xFFFF7622),
+                            disabledContainerColor = Color(0xFFFF7622)
                         )
                     ) {
                         if (state.isLoading) {
@@ -305,7 +318,6 @@ fun SignUpScreen(
                                 strokeWidth = 2.dp
                             )
                         } else {
-
                             Text(
                                 text = "SIGN UP",
                                 color = Color.White,
@@ -315,7 +327,7 @@ fun SignUpScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(22.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
