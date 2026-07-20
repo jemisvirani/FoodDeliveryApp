@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.food.delivery.presentation.navigation.App
 import com.food.delivery.ui.theme.FoodDeliveryAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -13,11 +14,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        window.setSoftInputMode(
-            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        )
         setContent {
             FoodDeliveryAppTheme {
                 val lazyListState = rememberLazyListState()
@@ -26,4 +25,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

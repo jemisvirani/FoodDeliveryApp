@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,7 +50,7 @@ fun TopAppBarDeliveryScreen(scrollBehavior: TopAppBarScrollBehavior,navControlle
      navigationIcon = {
          Icon(painter = painterResource(R.drawable.locationdiningscreen),
              modifier = Modifier.size(35.dp),
-             tint = Color.Red,
+             tint = colorResource(R.color.buttonColor),
              contentDescription = "Location")
      },
         actions = {
@@ -58,7 +59,7 @@ fun TopAppBarDeliveryScreen(scrollBehavior: TopAppBarScrollBehavior,navControlle
             }.background(Color.LightGray, CircleShape),
                 contentAlignment = Alignment.Center
             ){
-                Text("H", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = Color.Blue)
+                Text("H", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = colorResource(R.color.buttonColor))
             }
         }, colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
         scrollBehavior = scrollBehavior,

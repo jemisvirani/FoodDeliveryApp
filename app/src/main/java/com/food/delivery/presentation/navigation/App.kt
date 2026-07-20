@@ -67,6 +67,7 @@ import com.food.delivery.presentation.screens.ParticularCardScreen
 import com.food.delivery.presentation.screens.ProfileScreen
 import com.food.delivery.presentation.screens.QuickScreen
 import com.food.delivery.presentation.screens.SearchBarScreen
+import com.food.delivery.splash.screen.SplashScreen
 import com.google.firebase.auth.FirebaseAuth
 import okhttp3.Route
 
@@ -280,61 +281,107 @@ fun App(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            NavHost(navController = navController, startDestination = startGraph) {
-                navigation<SubNavigation.LoginSignUpScreen>(startDestination = Routes.LoginScreen) {
+            NavHost(
+                navController = navController,
+                startDestination = SubNavigation.SplashGraph
+            ) {
+
+                navigation<SubNavigation.SplashGraph>(
+                    startDestination = Routes.SplashScreen
+                ) {
+
+                    composable<Routes.SplashScreen> {
+
+                        SplashScreen(
+                            navController = navController
+                        )
+                    }
+                }
+
+                navigation<SubNavigation.LoginSignUpScreen>(
+                    startDestination = Routes.LoginScreen
+                ) {
+
                     composable<Routes.LoginScreen> {
+
                         LoginScreen(
                             navController = navController,
                             onSignUpClick = {
                                 navController.navigate(Routes.SignUpScreen)
-                            }, onForgotPasswordClick = {
+                            },
+                            onForgotPasswordClick = {
                                 navController.navigate(Routes.ForgetPasswordScreen)
-                            })
+                            }
+                        )
                     }
+
                     composable<Routes.SignUpScreen> {
+
                         SignUpScreen(
                             navController = navController,
                             onBackClick = {
                                 navController.popBackStack()
                             },
                             onLoginClick = {
-                                navController.navigate(Routes.LoginScreen)
+                                navController.popBackStack()
                             }
                         )
                     }
+
                     composable<Routes.ForgetPasswordScreen> {
-                        ForgotPasswordScreen(navController = navController, onBackClick = {
-                            navController.navigate(Routes.LoginScreen)
-                        })
+
+                        ForgotPasswordScreen(
+                            navController = navController,
+                            onBackClick = {
+                                navController.popBackStack()
+                            }
+                        )
                     }
+
                     composable<Routes.ChangePasswordScreen> {
-                        ChangePasswordScreen(navController = navController, onBackClick = {
-                            navController.navigate(Routes.ProfileScreen)
-                        })
+
+                        ChangePasswordScreen(
+                            navController = navController,
+                            onBackClick = {
+                                navController.popBackStack()
+                            }
+                        )
                     }
                 }
 
-                navigation<SubNavigation.MainHomeScreen>(startDestination = Routes.DeliveryScreen) {
+                navigation<SubNavigation.MainHomeScreen>(
+                    startDestination = Routes.DeliveryScreen
+                ) {
+
                     composable<Routes.DeliveryScreen> {
                         DeliveryScreen(navController, listState)
                     }
+
                     composable<Routes.QuickScreen> {
                         QuickScreen(navController, listState)
                     }
+
                     composable<Routes.DiningScreen> {
                         DiningScreen(navController, listState)
                     }
+
                     composable<Routes.ProfileScreen> {
                         ProfileScreen(navController)
                     }
+
                     composable<Routes.ParticularCardScreen> {
                         ParticularCardScreen(navController)
                     }
+
                     composable<Routes.FinalCheckoutScreen> {
                         FinalCheckOutScreen(navController)
                     }
+
                     composable<Routes.SearchBarScreen> {
-                        SearchBarScreen(modifier = Modifier, navController)
+                        SearchBarScreen(
+                            modifier = Modifier,
+                            navController = navController
+                        )
                     }
                 }
             }

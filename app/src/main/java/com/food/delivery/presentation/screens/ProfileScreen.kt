@@ -68,18 +68,16 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun ProfileScreen(navController: NavHostController) {
 
-
-
     Scaffold(
         modifier = Modifier.fillMaxWidth(),
         topBar = {
             CenterAlignedTopAppBar(
-                modifier = Modifier.background(color = colorResource(R.color.lightPink)),
+                modifier = Modifier.background(color = colorResource(R.color.lightOrange)),
                 title = {},
                 navigationIcon = {
                     Box(Modifier.fillMaxWidth()) {
                         IconButton(onClick = {
-                            navController.popBackStack()
+                            navController.navigateUp()
                         }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -232,8 +230,8 @@ fun LazyColumns(navController: NavController) {
 
                 FirebaseAuth.getInstance().signOut()
 
-                navController.navigate(SubNavigation.LoginSignUpScreen) {
-                    popUpTo(SubNavigation.MainHomeScreen) {
+                navController.navigate(SubNavigation.SplashGraph) {
+                    popUpTo(navController.graph.id) {
                         inclusive = true
                     }
                     launchSingleTop = true
@@ -297,7 +295,7 @@ fun TwelfthCard(x0: CardItem.TwelfthCard, navController: NavController) {
                 contentDescription = "Your Profile Icon",
                 modifier = Modifier.size(25.dp),
                 tint = Color.LightGray)
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = "Change Password", color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Icon(imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "forward arrow",
@@ -318,7 +316,7 @@ fun ProfileCard(card: CardItem.FirstCard) {
                 contentDescription = "Your Profile Icon",
                 modifier = Modifier.size(25.dp),
                 tint = Color.LightGray)
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = "Your Profile", color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = "48% Completed",
@@ -849,13 +847,13 @@ fun FoodOrderCard(card: CardItem.FifthCard) {
 fun RatingCard(card: CardItem.FourthCard) {
     Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 10.dp),
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Icon(painter = painterResource(R.drawable.rating),
                 contentDescription = "Rating Icon",
                 modifier = Modifier.size(25.dp),
                 tint = Color.LightGray)
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(text = "Your Rating", color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Icon(painter = painterResource(R.drawable.startrating),
@@ -875,7 +873,7 @@ fun AppearanceCard(card: CardItem.ThirdCard) {
                 contentDescription = "Your Profile",
                 modifier = Modifier.size(20.dp),
                 tint = Color.LightGray)
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(text = "Appearance", color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Text(text = "LIGHT",
@@ -890,7 +888,7 @@ fun AppearanceCard(card: CardItem.ThirdCard) {
 
 @Composable
 fun VegModeCard(card: CardItem.SecondCard) {
-    var switch1 by remember { mutableStateOf(false) }
+    var switch1 by remember { mutableStateOf(true) }
     Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)) {
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
@@ -901,7 +899,7 @@ fun VegModeCard(card: CardItem.SecondCard) {
                 modifier = Modifier.size(22.dp),
                 tint = colorResource(R.color.green)
             )
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(text = "Veg Mode", color = Color.Black)
             Spacer(modifier = Modifier.weight(1f))
             Switch(checked = switch1,

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.food.delivery.auth.domain.repository.AuthRepository
 import com.food.delivery.auth.ui.state.LoginUiState
+import com.food.delivery.auth.domain.util.UserPreferences
 import com.food.delivery.auth.validation.AuthValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
@@ -15,8 +16,24 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+
+            val remember = userPreferences.isRememberMe()
+            val email = userPreferences.getEmail()
+
+            _state.update {
+                it.copy(
+                    rememberMe = remember,
+                    email = email
+                )
+            }
+        }
+    }
 
     private val _state = MutableStateFlow(LoginUiState())
     val state = _state.asStateFlow()
@@ -87,6 +104,15 @@ class LoginViewModel @Inject constructor(
                 password = ui.password
             ).onSuccess {
 
+                if (ui.rememberMe) {
+                    userPreferences.saveRememberMe(
+                        rememberMe = true,
+                        email = ui.email
+                    )
+                } else {
+                    userPreferences.clearRememberMe()
+                }
+
                 _state.update {
                     it.copy(isLoading = false)
                 }
@@ -102,8 +128,6 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
-
-
         }
     }
 }

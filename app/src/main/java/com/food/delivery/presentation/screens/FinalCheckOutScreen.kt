@@ -11,24 +11,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -39,7 +33,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
@@ -529,7 +522,7 @@ fun ProductCard(productName: String, price: String) {
                     )
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_right_24),
-                        tint = colorResource(R.color.redish),
+                        tint = colorResource(R.color.oranges),
                         contentDescription = "Learn More"
                     )
                 }
@@ -539,8 +532,8 @@ fun ProductCard(productName: String, price: String) {
                     onClick = {},
                     modifier = Modifier.height(32.dp),
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(R.color.redish)),
-                    border = BorderStroke(1.dp,colorResource(R.color.redish))
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = colorResource(R.color.oranges)),
+                    border = BorderStroke(1.dp,colorResource(R.color.oranges))
                 ) {
                     Text("ADD")
                 }
@@ -586,7 +579,7 @@ fun ProductCard(productName: String, price: String) {
             Column(horizontalAlignment = Alignment.End) {
                 Card(
                     modifier = Modifier.size(width = 75.dp, height = 26.dp),
-                    colors = CardDefaults.cardColors(colorResource(R.color.lightPink)),
+                    colors = CardDefaults.cardColors(colorResource(R.color.lightOrange)),
                     border = BorderStroke(width = 1.dp, colorResource(R.color.addButtonRed)),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -649,13 +642,13 @@ fun ProductCard(productName: String, price: String) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add more",
-                tint = Color(0xFFE91E63),
+                tint = colorResource(R.color.buttonColor),
                 modifier = Modifier.size(18.dp)
             )
 
             Text(
                 text = "Add items",
-                color = colorResource(R.color.redish),
+                color = colorResource(R.color.oranges),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(start = 4.dp)

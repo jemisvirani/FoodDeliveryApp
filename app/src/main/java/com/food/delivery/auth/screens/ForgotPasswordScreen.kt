@@ -1,7 +1,7 @@
 package com.food.delivery.auth.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -36,11 +36,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,7 +51,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.food.delivery.auth.viewmodel.ForgotPasswordViewModel
-import com.food.delivery.presentation.navigation.Routes
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -65,6 +66,9 @@ fun ForgotPasswordScreen(
     val coroutineScope = rememberCoroutineScope()
 
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember {
+        FocusRequester()
+    }
     val keyboardController = LocalSoftwareKeyboardController.current
 
 
@@ -171,6 +175,10 @@ fun ForgotPasswordScreen(
                         .padding(24.dp)
                 ) {
 
+                    val emailFocus = remember { FocusRequester() }
+                    val buttonFocus = remember { FocusRequester() }
+
+
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
@@ -182,29 +190,33 @@ fun ForgotPasswordScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     AppTextField(
+                        focusRequester = emailFocus,
+                        nextFocusRequester = buttonFocus,
+                        keyboardType = KeyboardType.Email,
                         value = state.email,
                         onValueChange = viewModel::onEmailChange,
                         placeholder = "example@gmail.com",
-                        keyboardType = KeyboardType.Email,
                         isError = state.emailError != null,
-                        errorMessage = state.emailError
+                        errorMessage = state.emailError,
+                        imeAction = ImeAction.Done,
                     )
 
                     Spacer(modifier = Modifier.height(35.dp))
 
                     Button(
                         onClick = {
+                            coroutineScope.launch {
+                                focusManager.clearFocus(force = true)
+                                delay(50)
+                                keyboardController?.hide()
 
-                                coroutineScope.launch {
-                                    focusManager.clearFocus(force = true)
-                                    delay(50)
-                                    keyboardController?.hide()
-
-                                    viewModel.forgotPassword()
-                                }
+                                viewModel.forgotPassword()
+                            }
                         },
                         enabled = !state.isLoading,
                         modifier = Modifier
+                            .focusRequester(buttonFocus)
+                            .focusable()
                             .fillMaxWidth()
                             .height(58.dp),
                         shape = RoundedCornerShape(16.dp),

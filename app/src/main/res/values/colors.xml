@@ -12,19 +12,19 @@
     <color name="buttonColor">#FB8500</color>
 
     <color name="orange">#FB8500</color>
-    <color name="lightPink">#fff5f6</color>
-    <color name="addButtonRed">#CE1022</color>
+    <color name="lightOrange">#FFF3E0</color>
+    <color name="addButtonRed">#FB8500</color>
     <color name="greyishBlack">#464959</color>
-    <color name="redish">#e91e63</color>
+    <color name="oranges">#FB8500</color>
     <color name="finalScreenCard">#fdf6ec</color>
 
     <color name="ViewActivityClickableColor">#FF196A3D</color>
     <color name="ZomatoGold">#FFBD9148</color>
-    <color name="greendivider">#FF127C45</color>
+    <color name="greenDivider">#FF127C45</color>
     <color name="greenlight">#FFD8F3DF</color>
     <color name="cream">#FFFFF7E2</color>
     <color name="percentage">#FFAF9136</color>
-    <color name="offwhitebackground">#FFFFF7E2</color>
+    <color name="offWhiteBackground">#FFFFF7E2</color>
     <color name="light_green_track">#C8E6C9</color>
     <color name="light_red_track">#FFCDD2</color>
     

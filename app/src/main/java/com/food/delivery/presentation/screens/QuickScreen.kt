@@ -309,7 +309,7 @@ fun QuickScreenComponent(navController: NavController, onAddClick: () -> Unit) {
                         .padding(top = 120.dp)
                         .size(width = 100.dp, height = 36.dp),
                     shape = RoundedCornerShape(5.dp),
-                    colors = CardDefaults.cardColors(colorResource(R.color.lightPink)),
+                    colors = CardDefaults.cardColors(colorResource(R.color.lightOrange)),
                     border = BorderStroke(width = 1.dp, color = colorResource(R.color.addButtonRed))
                 ) {
 

@@ -14,7 +14,9 @@
         android:theme="@style/Theme.FoodDeliveryApp">
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.FoodDeliveryApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

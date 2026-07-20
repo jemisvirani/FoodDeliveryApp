@@ -1,6 +1,7 @@
 package com.food.delivery.auth.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -40,10 +41,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +72,7 @@ fun ChangePasswordScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val focusManager = LocalFocusManager.current
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val snackBarHostState = remember { SnackbarHostState() }
@@ -167,12 +172,17 @@ fun ChangePasswordScreen(
                 )
             ) {
 
+                val passwordFocus = remember { FocusRequester() }
+                val confirmPasswordFocus = remember { FocusRequester() }
+                val buttonFocus = remember { FocusRequester() }
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(24.dp)
                 ) {
+
 
                     Text(
                         text = "PASSWORD",
@@ -183,6 +193,9 @@ fun ChangePasswordScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     PasswordField(
+                        focusRequester = passwordFocus,
+                        nextFocusRequester = confirmPasswordFocus,
+                        imeAction = ImeAction.Next,
                         value = state.newPassword,
                         onValueChange = viewModel::onPasswordChange,
                         placeholder = "Enter new password",
@@ -205,6 +218,9 @@ fun ChangePasswordScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     PasswordField(
+                        focusRequester = confirmPasswordFocus,
+                        nextFocusRequester = buttonFocus,
+                        imeAction = ImeAction.Done,
                         value = state.confirmPassword,
                         onValueChange = viewModel::onConfirmPasswordChange,
                         placeholder = "Confirm password",
@@ -213,7 +229,7 @@ fun ChangePasswordScreen(
                             confirmPasswordVisible = !confirmPasswordVisible
                         },
                         isError = state.confirmPasswordError != null,
-                        errorMessage = state.confirmPasswordError
+                        errorMessage = state.confirmPasswordError,
                     )
 
                     Spacer(modifier = Modifier.height(35.dp))
@@ -230,7 +246,7 @@ fun ChangePasswordScreen(
                                 }                        }
                         },
                         enabled = !state.isLoading,
-                        modifier = Modifier
+                        modifier = Modifier.focusRequester(buttonFocus).focusable()
                             .fillMaxWidth()
                             .height(58.dp),
                         shape = RoundedCornerShape(16.dp),

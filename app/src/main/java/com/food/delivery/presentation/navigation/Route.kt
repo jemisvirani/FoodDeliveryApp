@@ -8,9 +8,15 @@ sealed class SubNavigation {
 
     @Serializable
     object MainHomeScreen : SubNavigation()
+
+    @Serializable
+    object SplashGraph : SubNavigation()
 }
 
 sealed class Routes {
+
+    @Serializable
+    object SplashScreen : Routes()
 
     @Serializable
     object LoginScreen : Routes()
