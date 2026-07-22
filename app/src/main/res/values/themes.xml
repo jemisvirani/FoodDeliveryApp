@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.FoodDeliveryApp" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
 

@@ -50,6 +50,7 @@ fun FoodDeliveryAppTheme(
         else -> LightColorScheme
     }
 
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

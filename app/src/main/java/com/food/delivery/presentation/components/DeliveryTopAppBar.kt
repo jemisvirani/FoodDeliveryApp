@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -54,12 +55,24 @@ fun TopAppBarDeliveryScreen(scrollBehavior: TopAppBarScrollBehavior,navControlle
              contentDescription = "Location")
      },
         actions = {
-            Box(modifier = Modifier.size(36.dp).clickable{
-                navController.navigate(Routes.ProfileScreen)
-            }.background(Color.LightGray, CircleShape),
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .background(
+                        color = colorResource(R.color.buttonColor),
+                        shape = CircleShape
+                    )
+                    .clickable {
+                        navController.navigate(Routes.ProfileScreen)
+                    },
                 contentAlignment = Alignment.Center
-            ){
-                Text("H", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = colorResource(R.color.buttonColor))
+            ) {
+                Text(
+                    text = "R",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
             }
         }, colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
         scrollBehavior = scrollBehavior,

@@ -1,6 +1,8 @@
 package com.food.delivery.presentation.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -24,7 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -69,7 +70,6 @@ import com.food.delivery.presentation.screens.QuickScreen
 import com.food.delivery.presentation.screens.SearchBarScreen
 import com.food.delivery.splash.screen.SplashScreen
 import com.google.firebase.auth.FirebaseAuth
-import okhttp3.Route
 
 data class BottomNavItem(
     val title: String,
@@ -167,7 +167,8 @@ fun App(
             SubNavigation.LoginSignUpScreen
         }
 
-    Scaffold(
+    androidx.compose.material3.Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             AnimatedVisibility(
                 modifier = Modifier
@@ -283,7 +284,10 @@ fun App(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = SubNavigation.SplashGraph
+                startDestination = SubNavigation.SplashGraph,
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
             ) {
 
                 navigation<SubNavigation.SplashGraph>(
@@ -352,7 +356,6 @@ fun App(
                 navigation<SubNavigation.MainHomeScreen>(
                     startDestination = Routes.DeliveryScreen
                 ) {
-
                     composable<Routes.DeliveryScreen> {
                         DeliveryScreen(navController, listState)
                     }
@@ -360,11 +363,9 @@ fun App(
                     composable<Routes.QuickScreen> {
                         QuickScreen(navController, listState)
                     }
-
                     composable<Routes.DiningScreen> {
                         DiningScreen(navController, listState)
                     }
-
                     composable<Routes.ProfileScreen> {
                         ProfileScreen(navController)
                     }

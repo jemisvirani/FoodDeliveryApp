@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,7 +68,8 @@ fun QuickScreen(navController: NavController, listState: LazyListState) {
     Box(modifier = Modifier.fillMaxSize()) {
 
         Scaffold(
-            containerColor = Color.Transparent,
+            containerColor = Color.White,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             topBar = {
                 TopAppBarDiningScreen(
                     scrollBehavior = scrollBehavior,
@@ -173,7 +175,7 @@ fun QuickScreen(navController: NavController, listState: LazyListState) {
                                 .size(50.dp)
                                 .background(Color.White, CircleShape)
                         ) {
-                            androidx.compose.material3.Icon(
+                            Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = null
                             )
