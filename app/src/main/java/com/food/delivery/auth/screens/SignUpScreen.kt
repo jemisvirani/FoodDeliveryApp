@@ -83,6 +83,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.food.delivery.auth.viewmodel.SignUpViewModel
 import com.food.delivery.presentation.navigation.Routes
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -108,6 +109,11 @@ fun SignUpScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val imeVisible = WindowInsets.isImeVisible
+
+    val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
 
 //    LaunchedEffect(state.snackBar) {
 //        state.snackBar?.let { message ->
@@ -302,6 +308,11 @@ fun SignUpScreen(
 
                     Button(
                         onClick = {
+                            coroutineScope.launch {
+                                focusManager.clearFocus(force = true)
+                                delay(50)
+                                keyboardController?.hide()
+                            }
                             if (!state.isLoading) {
                                 viewModel.signUp {
                                     navController.navigate(Routes.DeliveryScreen) {

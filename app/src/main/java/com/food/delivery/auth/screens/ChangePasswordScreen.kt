@@ -68,10 +68,10 @@ fun ChangePasswordScreen(
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
     var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val focusManager = LocalFocusManager.current
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val focusManager = LocalFocusManager.current
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
