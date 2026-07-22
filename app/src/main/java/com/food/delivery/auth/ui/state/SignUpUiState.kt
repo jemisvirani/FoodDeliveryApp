@@ -15,5 +15,7 @@ data class SignUpUiState(
     val confirmPasswordError: String? = null,
 
     val isLoading: Boolean = false,
-    val snackBar: String? = null
+    val snackBar: String? = null,
+    val validationMessage: String? = null
+
 )

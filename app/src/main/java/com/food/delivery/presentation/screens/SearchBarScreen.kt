@@ -58,14 +58,13 @@ import kotlin.math.max
 fun SearchBarScreen(modifier: Modifier, navController: NavController) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth().background(Color.White)
             .systemBarsPadding()
     ) {
         var searchQuery by remember { mutableStateOf("") }
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.White)
+                .fillMaxWidth().background(Color.White)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             Surface(
@@ -78,7 +77,7 @@ fun SearchBarScreen(modifier: Modifier, navController: NavController) {
             ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxSize().background(Color.White)
                         .padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

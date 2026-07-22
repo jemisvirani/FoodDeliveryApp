@@ -330,7 +330,7 @@ fun QuickScreenComponent(navController: NavController, onAddClick: () -> Unit) {
                         Icon(
                             painter = painterResource(R.drawable.baseline_add_24),
                             contentDescription = "Add item",
-                            tint = Color.Red,
+                            tint = colorResource(R.color.buttonColor),
                             modifier = Modifier
                                 .padding(3.dp)
                                 .size(14.dp)

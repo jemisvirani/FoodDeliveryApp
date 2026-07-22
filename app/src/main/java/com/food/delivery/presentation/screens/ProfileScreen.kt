@@ -39,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -72,6 +73,7 @@ fun ProfileScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth(),
         topBar = {
             CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
                 modifier = Modifier.background(color = colorResource(R.color.lightOrange)),
                 title = {},
                 navigationIcon = {
@@ -1222,27 +1224,27 @@ fun LogoutDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Logout")
+            Text("Logout", color = Color.Black)
         },
         text = {
-            Text("Are you sure you want to logout?")
+            Text("Are you sure you want to logout?", color = Color.Black)
         },
         confirmButton = {
             TextButton(onClick = onLogout) {
-                Text("Logout")
+                Text("Logout", color = Color.Black)
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text("Cancel", color = Color.Black)
             }
         }
     )
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewProfile() {
-    ProfileScreen(rememberNavController())
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewProfile() {
+//    ProfileScreen(rememberNavController())
+//}

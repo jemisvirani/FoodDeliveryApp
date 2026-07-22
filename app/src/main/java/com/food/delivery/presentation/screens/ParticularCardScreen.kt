@@ -591,7 +591,6 @@ fun ItemsList(
                         .fillMaxWidth()
                         .height(60.dp)
                 ) {
-                    // Top-end '+' icon
                     Icon(
                         painter = painterResource(R.drawable.baseline_add_24),
                         contentDescription = "Add item",
@@ -602,7 +601,6 @@ fun ItemsList(
                             .size(14.dp)
                     )
 
-                    // Center "ADD" text
                     Text(
                         text = "ADD",
                         modifier = Modifier.align(Alignment.Center),

@@ -8,7 +8,9 @@ import com.food.delivery.auth.ui.state.SignUpUiState
 import com.food.delivery.auth.validation.AuthValidation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,6 +18,9 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class SignUpViewModel @Inject constructor(private val repository: AuthRepository
 ) : ViewModel() {
+
+    private val _snackBarEvent = MutableSharedFlow<String>()
+    val snackBarEvent = _snackBarEvent.asSharedFlow()
 
     private val _state =
         MutableStateFlow(SignUpUiState())
@@ -85,9 +90,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
         }
     }
 
-    fun signUp(
-        onSuccess: () -> Unit
-    ) {
+    fun signUp(onSuccess: () -> Unit) {
 
         val ui = state.value
 
@@ -102,7 +105,6 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
             )
 
         _state.update {
-
             it.copy(
                 fullNameError = fullNameError,
                 emailError = emailError,
@@ -110,20 +112,26 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
                 passwordError = passwordError,
                 confirmPasswordError = confirmPasswordError
             )
-
         }
 
-        if (
-            fullNameError != null ||
-            emailError != null ||
-            addressError != null ||
-            passwordError != null ||
-            confirmPasswordError != null
-        ) {
+        val validationMessage = when {
+            fullNameError != null -> fullNameError
+            emailError != null -> emailError
+            addressError != null -> addressError
+            passwordError != null -> passwordError
+            confirmPasswordError != null -> confirmPasswordError
+            else -> null
+        }
+
+        if (validationMessage != null) {
+            viewModelScope.launch {
+                _snackBarEvent.emit(validationMessage)
+            }
             return
         }
 
         viewModelScope.launch {
+
             _state.update { it.copy(isLoading = true) }
 
             repository.signUp(
@@ -132,6 +140,7 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
                 address = ui.address,
                 password = ui.password
             ).onSuccess {
+
                 _state.update {
                     it.copy(isLoading = false)
                 }
@@ -139,14 +148,15 @@ class SignUpViewModel @Inject constructor(private val repository: AuthRepository
                 onSuccess()
 
             }.onFailure { exception ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        snackBar = exception.message ?: "Login failed"
-                    )
-                }
-            }
 
+                _state.update {
+                    it.copy(isLoading = false)
+                }
+
+                _snackBarEvent.emit(
+                    exception.message ?: "Sign Up failed"
+                )
+            }
         }
     }
 }

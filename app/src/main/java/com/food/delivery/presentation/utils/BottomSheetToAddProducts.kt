@@ -308,7 +308,7 @@ fun BottomSheetToAddProduct(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth().background(Color.White)
                     .padding(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -383,7 +383,7 @@ fun BottomSheetToAddProduct(
                         .weight(1f)
                         .height(48.dp),
                     colors = ButtonDefaults.buttonColors(
-                        colorResource(R.color.buttonColor)
+                        colorResource(R.color.buttonColor), contentColor = Color.White
                     )
                 ) {
                     Text("Add item ₹249")
