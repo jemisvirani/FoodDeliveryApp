@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
@@ -171,12 +172,15 @@ fun SignUpScreen(
                         .fillMaxSize()
                         .padding(start = 24.dp, end = 24.dp, top = 28.dp, bottom = 16.dp)
                 ) {
+                    val listState = rememberLazyListState()
+                    val scope = rememberCoroutineScope()
                     LazyColumn(
+                        state = listState,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(18.dp),
-                        contentPadding = PaddingValues(bottom = 16.dp)
+                        contentPadding = PaddingValues(bottom = 100.dp)
                     ) {
 
                         item {
@@ -191,14 +195,21 @@ fun SignUpScreen(
 
                             AppTextField(
                                 focusRequester = fullNameFocus,
-                                nextFocusRequester = emailFocus,
                                 keyboardType = KeyboardType.Text,
                                 value = state.fullName,
                                 onValueChange = viewModel::onNameChange,
                                 placeholder = "Enter your full name",
                                 isError = state.fullNameError != null,
                                 errorMessage = state.fullNameError,
-                                imeAction = ImeAction.Next
+                                imeAction = ImeAction.Next,
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        scope.launch {
+                                            listState.animateScrollToItem(1)
+                                            emailFocus.requestFocus()
+                                        }
+                                    }
+                                )
                             )
                         }
 
@@ -215,7 +226,6 @@ fun SignUpScreen(
 
                             AppTextField(
                                 focusRequester = emailFocus,
-                                nextFocusRequester = addressFocus,
                                 keyboardType = KeyboardType.Email,
                                 value = state.email,
                                 onValueChange = viewModel::onEmailChange,
@@ -223,6 +233,14 @@ fun SignUpScreen(
                                 isError = state.emailError != null,
                                 errorMessage = state.emailError,
                                 imeAction = ImeAction.Next,
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        scope.launch {
+                                            listState.animateScrollToItem(2)
+                                            addressFocus.requestFocus()
+                                        }
+                                    }
+                                )
                             )
                         }
 
@@ -239,7 +257,6 @@ fun SignUpScreen(
 
                             AppTextField(
                                 focusRequester = addressFocus,
-                                nextFocusRequester = passwordFocus,
                                 keyboardType = KeyboardType.Text,
                                 value = state.address,
                                 onValueChange = viewModel::onAddressChange,
@@ -247,6 +264,14 @@ fun SignUpScreen(
                                 isError = state.addressError != null,
                                 errorMessage = state.addressError,
                                 imeAction = ImeAction.Next,
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        scope.launch {
+                                            listState.animateScrollToItem(3)
+                                            passwordFocus.requestFocus()
+                                        }
+                                    }
+                                )
                             )
                         }
 
@@ -271,8 +296,15 @@ fun SignUpScreen(
                                 isError = state.passwordError != null,
                                 errorMessage = state.passwordError,
                                 focusRequester = passwordFocus,
-                                nextFocusRequester = confirmPasswordFocus,
-                                imeAction = ImeAction.Next
+                                imeAction = ImeAction.Next,
+                                keyboardActions = KeyboardActions(
+                                    onNext = {
+                                        scope.launch {
+                                            listState.animateScrollToItem(4)
+                                            confirmPasswordFocus.requestFocus()
+                                        }
+                                    }
+                                )
                             )
                         }
 
@@ -296,8 +328,13 @@ fun SignUpScreen(
                                 isError = state.confirmPasswordError != null,
                                 errorMessage = state.confirmPasswordError,
                                 focusRequester = confirmPasswordFocus,
-                                nextFocusRequester = buttonFocus,
-                                imeAction = ImeAction.Done
+                                imeAction = ImeAction.Done,
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        keyboardController?.hide()
+                                        focusManager.clearFocus()
+                                    }
+                                )
                             )
 
                         }
@@ -352,7 +389,9 @@ fun SignUpScreen(
                         visible = !imeVisible, enter = fadeIn(), exit = fadeOut()
                     ) {
 
-                        Row( modifier = Modifier .fillMaxWidth() .padding( top = 16.dp, bottom = 4.dp ), horizontalArrangement = Arrangement.Center ) {
+                        Row( modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 4.dp), horizontalArrangement = Arrangement.Center ) {
 
                             Text(
                                 text = "Already have an account? ",
@@ -403,7 +442,7 @@ fun SignUpHeader(
                     .clip(CircleShape)
                     .background(Color.White), contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = onBackClick) {
+                IconButton(onClick = { onBackClick() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
@@ -443,57 +482,46 @@ fun AppTextField(
     onValueChange: (String) -> Unit,
     placeholder: String,
     focusRequester: FocusRequester,
-    nextFocusRequester: FocusRequester? = null,
     keyboardType: KeyboardType,
     imeAction: ImeAction,
+    keyboardActions: KeyboardActions,
     isError: Boolean = false,
     errorMessage: String? = null,
 ) {
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
 
         OutlinedTextField(
-            value = value, onValueChange = onValueChange,
+            value = value,
+            onValueChange = onValueChange,
 
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusChanged {
-                    if (it.isFocused) {
-                        scope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
+                .focusRequester(focusRequester),
 
             singleLine = true,
 
             textStyle = TextStyle(
-                fontSize = 16.sp, color = Color.Black
+                fontSize = 16.sp,
+                color = Color.Black
             ),
 
             placeholder = {
                 Text(
-                    text = placeholder, color = Color.Gray, fontSize = 15.sp
+                    text = placeholder,
+                    color = Color.Gray,
+                    fontSize = 15.sp
                 )
             },
 
             keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType, imeAction = imeAction
-            ), keyboardActions = KeyboardActions(onNext = {
-                nextFocusRequester?.requestFocus()
-            }, onDone = {
-                keyboardController?.hide()
-                nextFocusRequester?.requestFocus()
-            }),
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
+
+            keyboardActions = keyboardActions,
 
             shape = RoundedCornerShape(16.dp),
 
@@ -502,25 +530,28 @@ fun AppTextField(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFFF5F5F5),
                 unfocusedContainerColor = Color(0xFFF5F5F5),
-
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
-
                 errorBorderColor = Color.Red,
                 errorContainerColor = Color(0xFFF5F5F5),
-
                 cursorColor = Color(0xFFFF7622),
-
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black
             )
         )
 
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = it,
+                color = Color.Red,
+                fontSize = 12.sp
+            )
+        }
     }
 }
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PasswordField(
     value: String,
@@ -529,70 +560,61 @@ fun PasswordField(
     visible: Boolean,
     onVisibleChange: () -> Unit,
     focusRequester: FocusRequester,
-    nextFocusRequester: FocusRequester? = null,
     imeAction: ImeAction,
+    keyboardActions: KeyboardActions,
     isError: Boolean = false,
-    errorMessage: String? = null
+    errorMessage: String? = null,
 ) {
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
 
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
 
         OutlinedTextField(
-            value = value, onValueChange = onValueChange,
+            value = value,
+            onValueChange = onValueChange,
 
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .focusRequester(focusRequester)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusChanged {
-                    if (it.isFocused) {
-                        scope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                }, textStyle = TextStyle(
-                fontSize = 16.sp, color = Color.Black
-            ),
-
-            placeholder = { Text(text = placeholder, color = Color(0xFF9E9E9E), fontSize = 15.sp) },
+                .focusRequester(focusRequester),
 
             singleLine = true,
 
-            visualTransformation = if (visible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
-
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text, imeAction = imeAction, autoCorrectEnabled = false
+            textStyle = TextStyle(
+                fontSize = 16.sp,
+                color = Color.Black
             ),
 
-            keyboardActions = KeyboardActions(onNext = {
-                nextFocusRequester?.requestFocus()
-            }, onDone = {
-                keyboardController?.hide()
-                nextFocusRequester?.requestFocus()
-            }),
+            placeholder = {
+                Text(
+                    text = placeholder,
+                    color = Color.Gray
+                )
+            },
+
+            visualTransformation =
+                if (visible)
+                    VisualTransformation.None
+                else
+                    PasswordVisualTransformation(),
+
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = imeAction,
+                autoCorrectEnabled = false
+            ),
+
+            keyboardActions = keyboardActions,
 
             trailingIcon = {
-                IconButton(
-                    onClick = onVisibleChange
-                ) {
+                IconButton(onClick = onVisibleChange) {
                     Icon(
-                        imageVector = if (visible) Icons.Default.Visibility
-                        else Icons.Default.VisibilityOff, contentDescription = null
+                        imageVector = if (visible)
+                            Icons.Default.Visibility
+                        else
+                            Icons.Default.VisibilityOff,
+                        contentDescription = null
                     )
                 }
             },
@@ -604,23 +626,25 @@ fun PasswordField(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = Color(0xFFF5F5F5),
                 unfocusedContainerColor = Color(0xFFF5F5F5),
-
                 focusedBorderColor = Color.Transparent,
                 unfocusedBorderColor = Color.Transparent,
-
                 errorBorderColor = Color.Red,
                 errorContainerColor = Color(0xFFF5F5F5),
-
                 cursorColor = Color(0xFFFF7622),
-
                 focusedTextColor = Color.Black,
                 unfocusedTextColor = Color.Black
             )
         )
 
+        errorMessage?.let {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = it,
+                color = Color.Red,
+                fontSize = 12.sp
+            )
+        }
     }
-
-
 }
 
 

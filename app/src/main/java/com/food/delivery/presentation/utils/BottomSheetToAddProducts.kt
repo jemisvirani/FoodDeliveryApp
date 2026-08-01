@@ -41,6 +41,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -73,6 +74,8 @@ fun BottomSheetToAddProduct(
 
     var text by remember { mutableStateOf("") }
     var count by remember { mutableIntStateOf(1) }
+
+    var totalCount by remember { mutableLongStateOf(249) }
 
 
 
@@ -330,6 +333,7 @@ fun BottomSheetToAddProduct(
                             .fillMaxHeight()
                             .clickable {
                                 count--
+                                totalCount = (totalCount - 249)
                                 if (count == 0){
                                     onClose()
                                 }
@@ -362,6 +366,7 @@ fun BottomSheetToAddProduct(
                             .fillMaxHeight()
                             .clickable {
                                 count++
+                                totalCount = (count * 249).toLong()
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -386,7 +391,8 @@ fun BottomSheetToAddProduct(
                         colorResource(R.color.buttonColor), contentColor = Color.White
                     )
                 ) {
-                    Text("Add item ₹249")
+
+                    Text("Add item ₹$totalCount")
                 }
             }
         }

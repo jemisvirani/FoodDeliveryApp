@@ -1,18 +1,27 @@
 package com.food.delivery.auth.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -54,6 +63,7 @@ import com.food.delivery.auth.viewmodel.ForgotPasswordViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ForgotPasswordScreen(
     navController: NavController,
@@ -70,6 +80,7 @@ fun ForgotPasswordScreen(
         FocusRequester()
     }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val imeVisible = WindowInsets.isImeVisible
 
 
     LaunchedEffect(state.snackBar) {
@@ -105,61 +116,17 @@ fun ForgotPasswordScreen(
                 .padding(innerPadding)
         ) {
 
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-                    .background(Color(0xFF121223))
-            ) {
+            ForgetPasswordHeader(
+                imeVisible = imeVisible,
+                onBackClick = { navController.popBackStack() })
 
-                Spacer(modifier = Modifier.height(45.dp))
-
-                Box(
-                    modifier = Modifier
-                        .padding(start = 20.dp)
-                        .size(50.dp)
-                        .clip(CircleShape)
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
-                ) {
-
-                    IconButton(
-                        onClick = onBackClick
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                Text(
-                    text = "Forgot Password",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Please sign in to your existing account",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    color = Color.LightGray,
-                    fontSize = 16.sp
-                )
-            }
 
             Card(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 220.dp),
+                    .padding(top = if (imeVisible) 8.dp else 235.dp)
+                    .navigationBarsPadding()
+                    .imePadding(),
                 shape = RoundedCornerShape(
                     topStart = 35.dp,
                     topEnd = 35.dp
@@ -171,13 +138,16 @@ fun ForgotPasswordScreen(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
+                        .weight(1f)
                         .padding(24.dp)
                 ) {
 
                     val emailFocus = remember { FocusRequester() }
                     val buttonFocus = remember { FocusRequester() }
 
+                    val listState = rememberLazyListState()
+                    val scope = rememberCoroutineScope()
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -191,7 +161,6 @@ fun ForgotPasswordScreen(
 
                     AppTextField(
                         focusRequester = emailFocus,
-                        nextFocusRequester = buttonFocus,
                         keyboardType = KeyboardType.Email,
                         value = state.email,
                         onValueChange = viewModel::onEmailChange,
@@ -199,49 +168,104 @@ fun ForgotPasswordScreen(
                         isError = state.emailError != null,
                         errorMessage = state.emailError,
                         imeAction = ImeAction.Done,
-                    )
-
-                    Spacer(modifier = Modifier.height(35.dp))
-
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                focusManager.clearFocus(force = true)
-                                delay(50)
+                        keyboardActions = KeyboardActions(
+                            onDone = {
                                 keyboardController?.hide()
-
-                                viewModel.forgotPassword()
+                                focusManager.clearFocus()
                             }
-                        },
-                        enabled = !state.isLoading,
-                        modifier = Modifier
-                            .focusRequester(buttonFocus)
-                            .focusable()
-                            .fillMaxWidth()
-                            .height(58.dp),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFFF7622),
-                            disabledContainerColor = Color(0xFFFF7622)
                         )
-                    ) {
-                        if (state.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(22.dp),
-                                color = Color.White,
-                                strokeWidth = 2.dp
-                            )
-                        } else {
-                            Text(
-                                text = "CONTINUE",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        coroutineScope.launch {
+                            focusManager.clearFocus(force = true)
+                            keyboardController?.hide()
+
+                            viewModel.forgotPassword()
                         }
+                    },
+                    enabled = !state.isLoading,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .height(58.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFFF7622),
+                        disabledContainerColor = Color(0xFFFF7622)
+                    )
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(22.dp),
+                            color = Color.White,
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(
+                            text = "CONTINUE",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
                     }
                 }
             }
         }
     }
 }
+
+@Composable
+fun ForgetPasswordHeader(imeVisible: Boolean, onBackClick: () -> Boolean) {
+    AnimatedVisibility(
+        visible = !imeVisible, enter = fadeIn(), exit = fadeOut()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(280.dp)
+                .background(Color(0xFF121223))
+        ) {
+
+            Spacer(modifier = Modifier.height(45.dp))
+
+            Box(
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .background(Color.White), contentAlignment = Alignment.Center
+            ) {
+                IconButton(onClick = { onBackClick() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.Black
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Text(
+                text = "Forgot Password?",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                fontSize = 34.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Welcome back! Sign in to continue.",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White.copy(alpha = 0.8f),
+                fontSize = 16.sp
+            )
+        }
+    }}
