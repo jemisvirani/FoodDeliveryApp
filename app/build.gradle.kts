@@ -1,24 +1,28 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    kotlin("plugin.serialization") version "2.0.0"
+    alias(libs.plugins.hilt)
     alias(libs.plugins.google.gms.google.services)
 }
 
 android {
-    namespace = "com.food.delivery"
+    namespace = "com.order.food"
+
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.food.delivery"
+        applicationId = "com.order.food"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -32,6 +36,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -39,14 +44,13 @@ android {
     buildFeatures {
         compose = true
     }
-    buildToolsVersion = "36.0.0"
 }
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.animation)
-    implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.compose.runtime.saveable)
@@ -62,7 +66,6 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.googleid)
     testImplementation(libs.junit)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
@@ -71,8 +74,6 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.androidx.datastore.preferences)
     //Glide
-    implementation(libs.glide)
-    implementation(libs.compose)
 
     implementation(libs.androidx.compose.material.icons.extended)
 
@@ -83,11 +84,14 @@ dependencies {
 //    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 //    kapt("androidx.hilt:hilt-compiler:1.2.0")
 
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    implementation(libs.kotlinx.coroutines.play.services)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
     implementation(libs.hilt.navigation.compose)
-    ksp(libs.androidx.hilt.compiler)
 
 
     // this is for coil

@@ -1,4 +1,4 @@
-package com.food.delivery
+package com.order.food
 
 import org.junit.Test
 
