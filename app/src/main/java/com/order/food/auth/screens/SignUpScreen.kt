@@ -510,7 +510,7 @@ fun PasswordTextField(
         isError = error != null,
         supportingText = {
             AnimatedVisibility(error != null) {
-                Text(error ?: "")
+                Text(error ?: "",color = colorResource(R.color.buttonColor))
             }
         },
         visualTransformation =
